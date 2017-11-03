@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 import time
-
+%stuff to test git
 """Initiallizing useful variables"""
 atom_types=([["Li","Vac"],[-1,1]])
 temperature=100
