@@ -64,7 +64,7 @@ def get_excited_energy(lattice):
     excited_energy=sum(product)+Li_correction
     return excited_energy #returns total excited state energy, on order 90keV
 
-def get_config_energy(lattice): #most computationally heavy bit of code that is run often
+def get_config_energy(lattice): #most computationally/memory heavy bit of code that is run often
     """
     lattice values MUST BE FLOATS!
     lattice must be a 4x4x1 function takes input lattice, uses the global cluster expansion to obtain the configurational energy of the state
@@ -166,12 +166,12 @@ def colorsquare(s,filename):#to plot the lattices as you go
     return
 
 def kmc_evolve(mc_lattice,hop_probability_by_ion,startpoint,endpoint):
-    """function that updates the hop_probability_by_ion after a hop has occured, updating only the effected probabilities, startpoint,endpoint are passed as lists: [1,j,k]"""
+    """function that updates the hop_probability_by_ion after a hop has occured, updating only the effected probabilities, startpoint,endpoint are passed as lists: [i,j,k]"""
     max_i=max([startpoint[0],endpoint[0]])+3#which atoms are affected by a hop
     max_j=max([startpoint[1],endpoint[1]])+3
     min_i=min([startpoint[0],endpoint[0]])-2
     min_j=min([startpoint[1],endpoint[1]])-2
-    k=0
+    k=0#alternative to adding: for k in range(size[2])
     dumbell_hop_probability=prefactor*np.exp(-(dumbell_hop_energy)/kb_t)
 
     for i in range(min_i,max_i):
@@ -227,7 +227,6 @@ def kmc_evolve(mc_lattice,hop_probability_by_ion,startpoint,endpoint):
                                     local_lattice=np.array([[[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[(i+2)%size[0]][j-1][k]],[mc_lattice[(i+3)%size[0]][j-2][k]]],[[mc_lattice[i-1][(j+1)%size[1]][k]],[hop_start_point],[hop_end_point],[mc_lattice[(i+2)%size[0]][j-2][k]]],[[mc_lattice[i-2][(j+1)%size[1]][k]],[mc_lattice[i-1][j][k]],[mc_lattice[i][j-1][k]],[mc_lattice[(i+1)%size[0]][j-2][k]]],[[mc_lattice[i-3][(j+1)%size[1]][k]],[mc_lattice[i-2][j][k]],[mc_lattice[i-1][j-1][k]],[mc_lattice[i][j-2][k]]]]) #good
                                 elif endpoint_occupancy[0]==atom_types[1][1]:
                                     local_lattice=np.array([[[mc_lattice[i-1][j][k]],[mc_lattice[i][j-1][k]],[mc_lattice[(i+1)%size[0]][j-2][k]],[mc_lattice[(i+2)%size[0]][j-3][k]]],[[mc_lattice[i-1][(j+1)%size[1]][k]],[hop_start_point],[hop_end_point],[mc_lattice[(i+2)%size[0]][j-2][k]]],[[mc_lattice[i-1][(j+2)%size[1]][k]],[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[(i+2)%size[0]][j-1][k]]],[[mc_lattice[i-1][(j+3)%size[1]][k]],[mc_lattice[i][(j+2)%size[1]][k]],[mc_lattice[(i+1)%size[0]][(j+1)%size[1]][k]],[mc_lattice[(i+2)%size[0]][j][k]]]])#good
-                        if hop_probability_by_site[endpoint_index]!=dumbell_hop_probability: #if its not a dumbell hop,
                             hop_probability_by_site[endpoint_index]=probability_multiplier*get_hop_probability(np.transpose(local_lattice,(1,0,2)),prefactor,kb_t,endpoint_index)#gets the themal probability of the hop in question
                             #tetrahedral_path_count+=1*probability_multiplier
                     endpoint_index=endpoint_index+1
@@ -236,18 +235,11 @@ def kmc_evolve(mc_lattice,hop_probability_by_ion,startpoint,endpoint):
                 hop_probability_by_ion[i][j][k]=np.zeros(6)
     return hop_probability_by_ion
 
-def kmc_step(mc_lattice,input_distance_lattice):
-    """main monte carlo loop
-    going over each lattice site and getting local lattices
-    """
-    distance_lattice=np.array(input_distance_lattice)
-    #index_lattice=np.array(mc_lattice) #index lattice is the one to loop over does not evolve during a step, so as not to multiple hop the forward hopping ions
-    time_step_per_hop=0
-    time_step_per_kmcstep=0
-    cycle_diffusion_coefficient=[]
-    k=0
-    dumbell_hop_probability=prefactor*np.exp(-(dumbell_hop_energy)/kb_t)
+
+def initialize_hop_probability_by_ion(mc_lattice):
     hop_probability_by_ion=np.tile(np.zeros(6),(size[0],size[1],size[2],1))
+    dumbell_hop_probability=prefactor*np.exp(-(dumbell_hop_energy)/kb_t)
+
     for i in range(size[0]):#looping over elements in the array to calculate all of the probabilities. write them into hop_probability_by_ion
         for j in range(size[1]):
             for k in range(size[2]):
@@ -303,35 +295,31 @@ def kmc_step(mc_lattice,input_distance_lattice):
                                         local_lattice=np.array([[[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[(i+2)%size[0]][j-1][k]],[mc_lattice[(i+3)%size[0]][j-2][k]]],[[mc_lattice[i-1][(j+1)%size[1]][k]],[hop_start_point],[hop_end_point],[mc_lattice[(i+2)%size[0]][j-2][k]]],[[mc_lattice[i-2][(j+1)%size[1]][k]],[mc_lattice[i-1][j][k]],[mc_lattice[i][j-1][k]],[mc_lattice[(i+1)%size[0]][j-2][k]]],[[mc_lattice[i-3][(j+1)%size[1]][k]],[mc_lattice[i-2][j][k]],[mc_lattice[i-1][j-1][k]],[mc_lattice[i][j-2][k]]]]) #good
                                     elif endpoint_occupancy[0]==atom_types[1][1]:
                                         local_lattice=np.array([[[mc_lattice[i-1][j][k]],[mc_lattice[i][j-1][k]],[mc_lattice[(i+1)%size[0]][j-2][k]],[mc_lattice[(i+2)%size[0]][j-3][k]]],[[mc_lattice[i-1][(j+1)%size[1]][k]],[hop_start_point],[hop_end_point],[mc_lattice[(i+2)%size[0]][j-2][k]]],[[mc_lattice[i-1][(j+2)%size[1]][k]],[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[(i+2)%size[0]][j-1][k]]],[[mc_lattice[i-1][(j+3)%size[1]][k]],[mc_lattice[i][(j+2)%size[1]][k]],[mc_lattice[(i+1)%size[0]][(j+1)%size[1]][k]],[mc_lattice[(i+2)%size[0]][j][k]]]])#good
-                            if hop_probability_by_site[endpoint_index]!=dumbell_hop_probability: #if its not a dumbell hop,
                                 hop_probability_by_site[endpoint_index]=probability_multiplier*get_hop_probability(np.transpose(local_lattice,(1,0,2)),prefactor,kb_t,endpoint_index)#gets the themal probability of the hop in question
                                 #tetrahedral_path_count+=1*probability_multiplier
 
                         endpoint_index=endpoint_index+1
                     #path_counter=np.append(path_counter,(dumbell_path_count,tetrahedral_path_count,vaccancy_count))
                     hop_probability_by_ion[i][j][k]=hop_probability_by_site[:]
-    gamma=np.sum(hop_probability_by_ion)#gamma as defined in VDVen paper
-    normalized_hop_probabilities=np.cumsum(hop_probability_by_ion)/gamma
-    rho=np.random.uniform(0,1) #the random number
-    lattice_index=np.searchsorted(normalized_hop_probabilities, rho) #get master index of hop
-    endpoint_index=lattice_index%6 #get which endpoint index of where the ion hopped to
-    hopping_ion_i= (lattice_index//6)//size[0] #the i location of the ion about to hop
-    hopping_ion_j= (lattice_index//6)%size[0] # the j location of the ion about to hop
-    hop_endpoints=np.array([[hopping_ion_i+1,hopping_ion_j],[hopping_ion_i,hopping_ion_j+1],[hopping_ion_i-1,hopping_ion_j+1],[hopping_ion_i-1,hopping_ion_j],[hopping_ion_i,hopping_ion_j-1],[hopping_ion_i+1,hopping_ion_j-1]])
-    hop_endpoint_i=hop_endpoints[endpoint_index][0]
-    hop_endpoint_j=hop_endpoints[endpoint_index][1]
+
+    return hop_probability_by_ion
 
 
-    mc_lattice[hopping_ion_i][hopping_ion_j][k]=atom_types[1][1] #moving vaccancy to initial ion location
-    mc_lattice[hop_endpoint_i%size[0]][hop_endpoint_j%size[1]][0]=atom_types[1][0] #moving ion to appropriate endpoint
-    distance_lattice[hop_endpoint_i%size[0]][hop_endpoint_j%size[1]][k]=distance_lattice[hopping_ion_i][hopping_ion_j][k] #moving the ion's coordinate to the appropriate site
-    distance_lattice[hop_endpoint_i%size[0]][hop_endpoint_j%size[1]][k][2]=distance_lattice[hop_endpoint_i%size[0]][hop_endpoint_j%size[1]][k][2]+100*(hop_endpoint_i//size[0])+hop_endpoint_j//size[1] #adds index to distance lattice for looping purposes
-    distance_lattice[hopping_ion_i][hopping_ion_j][k]=[-1,0,0]#clears the coordiates from the old site ->sticks in a vaccancy
-    time_step_per_hop=(-1./gamma)*np.log(np.random.uniform(0,1))
-    time_step_per_kmcstep=time_step_per_kmcstep+time_step_per_hop
+def kmc_step(mc_lattice,input_distance_lattice,input_hop_probability_by_ion):
+    """main monte carlo loop
+    going over each lattice site and getting local lattices
+    """
+    distance_lattice=np.array(input_distance_lattice)
+    hop_probability_by_ion=np.array(input_hop_probability_by_ion)
+    #index_lattice=np.array(mc_lattice) #index lattice is the one to loop over does not evolve during a step, so as not to multiple hop the forward hopping ions
+    time_step_per_hop=0
+    time_step_per_kmcstep=0
+    k=0
+    dumbell_hop_probability=prefactor*np.exp(-(dumbell_hop_energy)/kb_t)
+
+
 
     for hop in range(int(size[0]*size[1]*size[2]*Li_concentration)):
-        hop_probability_by_ion=kmc_evolve(mc_lattice,hop_probability_by_ion, [hopping_ion_i,hopping_ion_j,0],[hop_endpoint_i,hop_endpoint_j,0])
         gamma=np.sum(hop_probability_by_ion)#gamma as defined in VDVen paper
         normalized_hop_probabilities=np.cumsum(hop_probability_by_ion)/gamma
         rho=np.random.uniform(0,1) #the random number
@@ -350,108 +338,25 @@ def kmc_step(mc_lattice,input_distance_lattice):
         distance_lattice[hopping_ion_i][hopping_ion_j][k]=[-1,0,0]#clears the coordiates from the old site ->sticks in a vaccancy
         time_step_per_hop=(-1./gamma)*np.log(np.random.uniform(0,1))
         time_step_per_kmcstep=time_step_per_kmcstep+time_step_per_hop
-        hop_histogram[endpoint_index]+=1
+        hop_probability_by_ion=kmc_evolve(mc_lattice,hop_probability_by_ion, [hopping_ion_i,hopping_ion_j,0],[hop_endpoint_i,hop_endpoint_j,0]) #update the probability lattice after the hop
+        #hop_histogram[endpoint_index]+=1
 
-    #print "timestep is: " +str(time_step_per_kmcstep)
 
 
-                    # if np.any(hop_probability_by_site!=0):
-                    #     gamma=np.sum(hop_probability_by_site)
-                    #     normalized_hop_probabilities=np.append(0.,np.cumsum(hop_probability_by_site)/gamma)
-                    #     for endpoint_index in range(len(normalized_hop_probabilities))[:-1]:
-                    #         if rho<=normalized_hop_probabilities[endpoint_index+1] and rho>normalized_hop_probabilities[endpoint_index]: #condition for hop set in VDVen paper
-                    #             mc_lattice[i][j][k]=atom_types[1][1] #moving vacancy to initial lattice location
-                    #             mc_lattice[endpoints[endpoint_index][0]%size[0]][endpoints[endpoint_index][1]%size[1]][k]=atom_types[1][0] #moving the ion to the appropriate vaccancy
-                    #             distance_lattice[endpoints[endpoint_index][0]%size[0]][endpoints[endpoint_index][1]%size[1]][k]=distance_lattice[i][j][k] #moving the ion's coordinate to the appropriate site
-                    #             distance_lattice[endpoints[endpoint_index][0]%size[0]][endpoints[endpoint_index][1]%size[1]][k][2]=distance_lattice[endpoints[endpoint_index][0]%size[0]][endpoints[endpoint_index][1]%size[1]][k][2]+100*(endpoints[endpoint_index][0]//size[0])+endpoints[endpoint_index][1]//size[1]
-                    #             distance_lattice[i][j][k]=[-1,0,0]#clears the coordiates from the old site ->sticks in a vaccancy
-                    #             hop_histogram[endpoint_index]+=1
 
     #print hop_histogram
     return (mc_lattice, distance_lattice, time_step_per_kmcstep, hop_probability_by_ion)
 
-def presim_step(mc_lattice):#lite version of kmc_step, because you don't need to track the distances, just make the atoms move
+def presim_step(mc_lattice,input_hop_probability_by_ion):#lite version of kmc_step, because you don't need to track the distances, just make the atoms move
     index_lattice=np.array(mc_lattice) #index lattice is the one to loop over does not evolve during a step, so as not to multiple hop the forward hopping ions
+    hop_probability_by_ion=np.array(input_hop_probability_by_ion)
     time_step_per_hop=0
     time_step_per_kmcstep=0
     total_hop_probability=np.zeros(6)
-    hop_probability_by_ion=np.tile(np.zeros(6),(size[0],size[1],size[2],1))
     dumbell_hop_probability=prefactor*np.exp(-(dumbell_hop_energy)/kb_t)
 
-    """initialize the first lattice of hop_probabilitys"""
-    for i in np.random.randint(low=0, high=size[0], size=(size[0],)):#looping randomly over every element in array, one KMC step
-        for j in np.random.randint(low=0, high=size[1], size=(size[1],)):
-            for k in range(size[2]):
-                hop_start_point=float(mc_lattice[i][j][k])
-                if int(mc_lattice[i][j][k])==int(atom_types[1][0]):#is there an ion on the site at the start of the cycle?
-                    endpoints=np.array([[i+1,j],[i,j+1],[i-1,j+1],[i-1,j],[i,j-1],[i+1,j-1]]) #directions ion can hop
-                    endpoint_occupancy=np.array([mc_lattice[endpoints[0][0]%size[0]][endpoints[0][1]%size[1]][0],mc_lattice[endpoints[1][0]%size[0]][endpoints[1][1]%size[1]][0],mc_lattice[endpoints[2][0]%size[0]][endpoints[2][1]%size[1]][0],mc_lattice[endpoints[3][0]%size[0]][endpoints[3][1]%size[1]][0],mc_lattice[endpoints[4][0]%size[0]][endpoints[4][1]%size[1]][0],mc_lattice[endpoints[5][0]%size[0]][endpoints[5][1]%size[1]][0]])
-                    hop_probability_by_site=np.zeros(6)
-                    endpoint_index=0
-                    for (endpoint_index, endpoint) in list(enumerate(endpoints)): #defines local lattice, based on endpoint (direction indepenance), creates hop_probability_by_site a vector with probability/per site of hops
-                        probability_multiplier=1
-                        hop_end_point=float(mc_lattice[endpoint[0]%size[0]][endpoint[1]%size[1]][0])
-                        if int(hop_end_point)==int(atom_types[1][0]):#is this endpoint clear? if not probability of a hop is zero
-                            hop_probability_by_site[endpoint_index]=0
-                            #vaccancy_count=vaccancy_count-1
-                        elif hop_end_point==atom_types[1][1]: #local lattice is the 4x4x1 lattice that the cluster expansions know, the if statements are to make it direction independent, hop goes from 1,1 to 2,1 endpoint
-                            if endpoint_occupancy[endpoint_index-1]==atom_types[1][1] and endpoint_occupancy[(endpoint_index+1)%len(endpoint_occupancy)]==atom_types[1][1]:#if both adjacent sites are empty, probability of going here is doubled
-                                probability_multiplier=2
-                            if endpoint_occupancy[endpoint_index-1]==atom_types[1][0] and endpoint_occupancy[(endpoint_index+1)%len(endpoint_occupancy)]==atom_types[1][0]:  #if both sites adjacent to the hop are occupied, our atom follows a straight line path (dumbell) with a fixed probability
-                                hop_probability_by_site[endpoint_index]=dumbell_hop_probability
-                                #dumbell_path_count+=1
-                            else:
-                                if endpoint_index==0:
-                                    if endpoint_occupancy[5]==atom_types[1][1]:
-                                        local_lattice=np.array([[[mc_lattice[i-1][(j+1)%size[1]][k]],[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[(i+1)%size[0]][(j+1)%size[1]][k]],[mc_lattice[(i+2)%size[0]][(j+1)%size[0]][k]]],[[mc_lattice[i-1][j][k]],[hop_start_point],[hop_end_point],[mc_lattice[(i+2)%size[0]][j][k]]],[[mc_lattice[i-1][j-1][k]],[mc_lattice[i][j-1][k]],[mc_lattice[(i+1)%size[0]][j-1][k]],[mc_lattice[(i+2)%size[0]][j-1][k]]],[[mc_lattice[i-1][j-2][k]],[mc_lattice[i][j-2][k]],[mc_lattice[(i+1)%size[0]][j-2][k]],[mc_lattice[(i+2)%size[0]][j-2][k]]]]) #good
-                                    elif endpoint_occupancy[1]==atom_types[1][1]:
-                                        local_lattice=np.array([[[mc_lattice[i][j-1][k]],[mc_lattice[(i+1)%size[0]][j-1][k]],[mc_lattice[(i+2)%size[0]][j-1][k]],[mc_lattice[(i+3)%size[0]][j-1][k]]],[[mc_lattice[i-1][j][k]],[hop_start_point],[hop_end_point],[mc_lattice[(i+2)%size[0]][j][k]]],[[mc_lattice[i-2][(j+1)%size[1]][k]],[mc_lattice[i-1][(j+1)%size[1]][k]],[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[(i+1)%size[0]][(j+1)%size[1]][k]]],[[mc_lattice[i-3][(j+2)%size[1]][k]],[mc_lattice[i-2][(j+2)%size[1]][k]],[mc_lattice[i-1][(j+2)%size[1]][k]],[mc_lattice[i][(j+2)%size[1]][k]]]]) #good
-                                elif endpoint_index==1:
-                                    if endpoint_occupancy[2]==atom_types[1][1]:
-                                        local_lattice=np.array([[[mc_lattice[(i+1)%size[0]][j-1][k]],[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[(i+1)%size[0]][(j+1)%size[1]][k]],[mc_lattice[(i+1)%size[0]][(j+2)%size[1]][k]]],[[mc_lattice[i][j-1][k]],[hop_start_point],[hop_end_point],[mc_lattice[i][(j+2)%size[1]][k]]],[[mc_lattice[i-1][j-1][k]],[mc_lattice[i-1][j][k]],[mc_lattice[i-1][(j+1)%size[1]][k]],[mc_lattice[i-1][(j+2)%size[1]][k]]],[[mc_lattice[i-2][j-1][k]],[mc_lattice[i-2][j][k]],[mc_lattice[i-2][(j+1)%size[1]][k]],[mc_lattice[i-2][(j+2)%size[1]][k]]]]) #good
-                                    elif endpoint_occupancy[0]==atom_types[1][1]:
-                                        local_lattice=np.array([[[mc_lattice[i-1][j][k]],[mc_lattice[i-1][(j+1)%size[1]][k]],[mc_lattice[i-1][(j+2)%size[1]][k]],[mc_lattice[i-1][(j+3)%size[1]][k]]],[[mc_lattice[i][j-1][k]],[hop_start_point],[hop_end_point],[mc_lattice[i][(j+2)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][j-2][k]],[mc_lattice[(i+1)%size[0]][j-1][k]],[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[(i+1)%size[0]][(j+1)%size[1]][k]]],[[mc_lattice[(i+2)%size[0]][j-3][k]],[mc_lattice[(i+2)%size[0]][j-2][k]],[mc_lattice[(i+2)%size[0]][j-1][k]],[mc_lattice[(i+2)%size[0]][j][k]]]]) #good
-                                elif endpoint_index==2:
-                                    if endpoint_occupancy[1]==atom_types[1][1]:
-                                        local_lattice=np.array([[[mc_lattice[i][j-1][k]],[mc_lattice[i-1][j][k]],[mc_lattice[i-2][(j+1)%size[1]][k]],[mc_lattice[i-3][(j+2)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][j-1][k]],[hop_start_point],[hop_end_point],[mc_lattice[i-2][(j+2)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[i-1][(j+2)%size[1]][k]],[mc_lattice[(i+3)%size[0]][j-1][k]]],[[mc_lattice[(i+2)%size[0]][j][k]],[mc_lattice[(i+1)%size[0]][(j+1)%size[1]][k]],[mc_lattice[i][(j+2)%size[1]][k]],[mc_lattice[(i+2)%size[0]][(j+2)%size[1]][k]]]])#good
-                                    elif endpoint_occupancy[3]==atom_types[1][1]:
-                                        local_lattice=np.array([[[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[i-1][(j+2)%size[1]][k]],[mc_lattice[i-2][(j+3)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][j-1][k]],[hop_start_point],[hop_end_point],[mc_lattice[i-2][(j+2)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][j-2][k]],[mc_lattice[i][j-1][k]],[mc_lattice[i-1][j][k]],[mc_lattice[i-2][(j+1)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][j-3][k]],[mc_lattice[i][j-2][k]],[mc_lattice[i-1][j-1][k]],[mc_lattice[i-2][j][k]]]]) #good
-                                elif endpoint_index==3:
-                                    if endpoint_occupancy[2]==atom_types[1][1]:
-                                        local_lattice=np.array([[[mc_lattice[(i+1)%size[0]][j-1][k]],[mc_lattice[i][j-1][k]],[mc_lattice[i-1][j-1][k]],[mc_lattice[i-2][j-1][k]]],[[mc_lattice[(i+1)%size[0]][j][k]],[hop_start_point],[hop_end_point],[mc_lattice[i-2][j][k]]],[[mc_lattice[(i+1)%size[0]][(j+1)%size[1]][k]],[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[i-1][(j+1)%size[1]][k]],[mc_lattice[i-2][(j+1)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][(j+2)%size[1]][k]],[mc_lattice[i][(j+2)%size[1]][k]],[mc_lattice[i-1][(j+2)%size[1]][k]],[mc_lattice[i-2][(j+2)%size[1]][k]]]]) #good
-                                    elif endpoint_occupancy[4]==atom_types[1][1]:
-                                        local_lattice=np.array([[[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[i-1][(j+1)%size[1]][k]],[mc_lattice[i-2][(j+1)%size[1]][k]],[mc_lattice[i-3][(j+1)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][j][k]],[hop_start_point],[hop_end_point],[mc_lattice[i-2][j][k]]],[[mc_lattice[(i+2)%size[0]][j-1][k]],[mc_lattice[(i+1)%size[0]][j-1][k]],[mc_lattice[i][j-1][k]],[mc_lattice[i-1][j-1][k]]],[[mc_lattice[(i+3)%size[0]][j-2][k]],[mc_lattice[(i+2)%size[0]][j-2][k]],[mc_lattice[(i+1)%size[0]][j-2][k]],[mc_lattice[i][j-2][k]]]]) #good
-                                elif endpoint_index==4:
-                                    if endpoint_occupancy[3]==atom_types[1][1]:
-                                        local_lattice=np.array([[[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[(i+1)%size[0]][j-1][k]],[mc_lattice[(i+1)%size[0]][j-2][k]],[mc_lattice[(i+1)%size[0]][j-3][k]]],[[mc_lattice[i][(j+1)%size[1]][k]],[hop_start_point],[hop_end_point],[mc_lattice[i][j-2][k]]],[[mc_lattice[i-1][(j+2)%size[1]][k]],[mc_lattice[i-1][(j+1)%size[0]][k]],[mc_lattice[i-1][j][k]],[mc_lattice[i-1][j-1][k]]],[[mc_lattice[i-2][(j+3)%size[1]][k]],[mc_lattice[i-2][(j+2)%size[1]][k]],[mc_lattice[i-2][(j+1)%size[1]][k]],[mc_lattice[i-2][j][k]]]])#good
-                                    elif endpoint_occupancy[5]==atom_types[1][1]:
-                                        local_lattice=np.array([[[mc_lattice[i-1][(j+1)%size[1]][k]],[mc_lattice[i-1][j][k]],[mc_lattice[i-1][j-1][k]],[mc_lattice[i-2][j-2][k]]],[[mc_lattice[i][(j+1)%size[1]][k]],[hop_start_point],[hop_end_point],[mc_lattice[i][j-2][k]]],[[mc_lattice[(i+1)%size[0]][(j+1)%size[1]][k]],[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[(i+1)%size[0]][j-1][k]],[mc_lattice[(i+1)%size[0]][j-2][k]]],[[mc_lattice[(i+2)%size[0]][(j+1)%size[1]][k]],[mc_lattice[(i+2)%size[0]][j][k]],[mc_lattice[(i+2)%size[0]][j-1][k]],[mc_lattice[(i+2)%size[0]][j-2][k]]]])#good
-                                elif endpoint_index==5:
-                                    if endpoint_occupancy[4]==atom_types[1][1]:
-                                        local_lattice=np.array([[[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[(i+2)%size[0]][j-1][k]],[mc_lattice[(i+3)%size[0]][j-2][k]]],[[mc_lattice[i-1][(j+1)%size[1]][k]],[hop_start_point],[hop_end_point],[mc_lattice[(i+2)%size[0]][j-2][k]]],[[mc_lattice[i-2][(j+1)%size[1]][k]],[mc_lattice[i-1][j][k]],[mc_lattice[i][j-1][k]],[mc_lattice[(i+1)%size[0]][j-2][k]]],[[mc_lattice[i-3][(j+1)%size[1]][k]],[mc_lattice[i-2][j][k]],[mc_lattice[i-1][j-1][k]],[mc_lattice[i][j-2][k]]]]) #good
-                                    elif endpoint_occupancy[0]==atom_types[1][1]:
-                                        local_lattice=np.array([[[mc_lattice[i-1][j][k]],[mc_lattice[i][j-1][k]],[mc_lattice[(i+1)%size[0]][j-2][k]],[mc_lattice[(i+2)%size[0]][j-3][k]]],[[mc_lattice[i-1][(j+1)%size[1]][k]],[hop_start_point],[hop_end_point],[mc_lattice[(i+2)%size[0]][j-2][k]]],[[mc_lattice[i-1][(j+2)%size[1]][k]],[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[(i+2)%size[0]][j-1][k]]],[[mc_lattice[i-1][(j+3)%size[1]][k]],[mc_lattice[i][(j+2)%size[1]][k]],[mc_lattice[(i+1)%size[0]][(j+1)%size[1]][k]],[mc_lattice[(i+2)%size[0]][j][k]]]])#good
-                            if hop_probability_by_site[endpoint_index]!=dumbell_hop_probability: #if its not a dumbell hop,
-                                hop_probability_by_site[endpoint_index]=probability_multiplier*get_hop_probability(np.transpose(local_lattice,(1,0,2)),prefactor,kb_t,endpoint_index)#gets the themal probability of the hop in question
-                                #tetrahedral_path_count+=1*probability_multiplier
-                        endpoint_index=endpoint_index+1
-                    hop_probability_by_ion[i][j][k]=hop_probability_by_site[:]
-
-    gamma=np.sum(hop_probability_by_ion)#gamma as defined in VDVen paper
-    normalized_hop_probabilities=np.cumsum(hop_probability_by_ion)/gamma
-    rho=np.random.uniform(0,1) #the random number
-    lattice_index=np.searchsorted(normalized_hop_probabilities, rho) #get master index of hop
-    endpoint_index=lattice_index%6 #get which endpoint the ion hopped to
-    hopping_ion_i= (lattice_index//6)//size[0]
-    hopping_ion_j= (lattice_index//6)%size[0]
-    hop_endpoints=np.array([[hopping_ion_i+1,hopping_ion_j],[hopping_ion_i,hopping_ion_j+1],[hopping_ion_i-1,hopping_ion_j+1],[hopping_ion_i-1,hopping_ion_j],[hopping_ion_i,hopping_ion_j-1],[hopping_ion_i+1,hopping_ion_j-1]])
-    hop_endpoint_i=hop_endpoints[endpoint_index][0]
-    hop_endpoint_j=hop_endpoints[endpoint_index][1]
-    mc_lattice[hopping_ion_i][hopping_ion_j][k]=atom_types[1][1] #moving vaccancy to initial ion location
-    mc_lattice[hop_endpoint_i%size[0]][hop_endpoint_j%size[1]][0]=atom_types[1][0] #moving ion to appropriate endpoint
 
     for hop in range(int(size[0]*size[1]*size[2]*Li_concentration)):
-        hop_probability_by_ion=kmc_evolve(mc_lattice,hop_probability_by_ion, [hopping_ion_i,hopping_ion_j,0],[hop_endpoint_i,hop_endpoint_j,0])
         gamma=np.sum(hop_probability_by_ion)#gamma as defined in VDVen paper
         normalized_hop_probabilities=np.cumsum(hop_probability_by_ion)/gamma
         rho=np.random.uniform(0,1) #the random number
@@ -464,9 +369,10 @@ def presim_step(mc_lattice):#lite version of kmc_step, because you don't need to
         hop_endpoint_j=hop_endpoints[endpoint_index][1]
         mc_lattice[hopping_ion_i][hopping_ion_j][k]=atom_types[1][1] #moving vaccancy to initial ion location
         mc_lattice[hop_endpoint_i%size[0]][hop_endpoint_j%size[1]][0]=atom_types[1][0] #moving ion to appropriate endpoint
+        hop_probability_by_ion=kmc_evolve(mc_lattice,hop_probability_by_ion, [hopping_ion_i,hopping_ion_j,0],[hop_endpoint_i,hop_endpoint_j,0]) #update the probability lattice after the hop
 
 
-    return (mc_lattice)
+    return (mc_lattice,hop_probability_by_ion)
 
 
 
@@ -486,10 +392,10 @@ def presim_step(mc_lattice):#lite version of kmc_step, because you don't need to
 
 diffusion_coefficient_vs_concentration=[]
 #for averaging_iterations in [1]:#range(1, 20,2):
-averaging_iterations=0
+averaging_iterations=0 #loop over this
 size=[0,0,0]
-dimensions=[25] #loop over this
-simulation_iterations=100  #how many steps
+dimensions=[10] #loop over this
+simulation_iterations=10  #how many steps
 presimulation_iterations=0 #how many pre simulation steps
 concentrations= [0.1]#[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]#np.array(range(1,100,6))/100. # looping over these too
 average_path_counts=[]
@@ -524,12 +430,12 @@ for dimension in dimensions:# range(5,65,8): #to check size dependence of parame
                     mc_lattice[i][j][k] = np.float32(atom_types[1][0])
                     Li_atoms+=1
 
-
+            hop_probability_by_ion=initialize_hop_probability_by_ion(mc_lattice) #initializing the hop probabilities
 
             while averaging_step < presimulation_iterations: #initializes the mc_lattice for the simulation to avoid starting artifacts
-                mc_lattice=presim_step(mc_lattice)
+                (mc_lattice,hop_probability_by_ion)=presim_step(mc_lattice,hop_probability_by_ion)
                 if averaging_step%10==0:
-                    print averaging_step
+                    print "presimulation step:" +str(averaging_step)
                 #colorsquare(np.transpose(mc_lattice)[0],"lattice_pictures/"+str(averaging_step)+".png") $to see the lattice
 
                 averaging_step+=1
@@ -548,7 +454,7 @@ for dimension in dimensions:# range(5,65,8): #to check size dependence of parame
             """THE KMC LOOP"""
             #path_counter=[]
             while simulation < simulation_iterations: #how many kmc steps to take
-                (mc_lattice,distance_lattice,time_step,hop_probability_by_ion)=kmc_step(mc_lattice,distance_lattice)
+                (mc_lattice,distance_lattice,time_step,hop_probability_by_ion)=kmc_step(mc_lattice,distance_lattice,hop_probability_by_ion)
                 if simulation%10==0:
                     print "simulation step: " +str( simulation)
                 #colorsquare(np.transpose(mc_lattice)[0],"lattice_pictures/"+str(simulation+10)+".png")
