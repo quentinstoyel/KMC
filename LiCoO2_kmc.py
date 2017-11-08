@@ -412,7 +412,7 @@ for dimension in dimensions:# range(5,65,8): #to check size dependence of parame
         diffusion_coefficient=[]
 
         while averaging_index<=averaging_iterations:
-
+            print "concentration, averaging step is: " +str(Li_concentration) + ","+ str(averaging_index)
             distance_lattice=np.tile([-1,0,0],(size[0],size[1],size[2],1))
             averaging_step=0
             simulation=0
