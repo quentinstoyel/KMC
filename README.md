@@ -1,7 +1,10 @@
 # KMC
-Kinetic Monte Carlo Code for Lithium Diffussion
 
-General Structure of the code.
+Kinetic Monte Carlo Code for Lithium Diffussion
+By no means a general or transferable piece of code.  For all academic purposes, the reader is refered to:
+A. Van der Ven, G. Ceder, M. Asta, and P. D. Tepesch. Phys. Rev. B 64, 184307 – Published 25 October 2001
+
+General Structure of the code:
 
 Creats a 2d Hexagonal lattice (defined by "size/dimension") with a random distribution of Li atoms on it.
 Performs a number of KMC steps on the lattice, each step consists of:
