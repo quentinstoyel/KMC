@@ -12,6 +12,9 @@ import matplotlib.pyplot as plt
 import random
 import time
 import sys
+import math
+from itertools import combinations
+import pickle
 
 """Initiallizing useful variables"""
 atom_types=([["Li","Vac"],[-1,1]]) #what values are assigned to which atoms in the matrix
@@ -40,6 +43,8 @@ def get_excited_energy(lattice):
         sys.exit("Error: endpoint not empty!")
     if lattice[1][1][0]!=atom_types[1][0]:
         sys.exit("Error: no ion to move!")
+    if lattice[2][2][0]!=atom_types[1][1]:
+        sys.exit("Error: nearest neighbour not empty!")
     eci=[-89292.2076392, 12.0246248871, 0.5321464472, 0.6013549835, 0.6062609396, 0.5901284127, 0.5864268761, 0.1392609219, 0.0912246106, 0.0125126163, 0.040332075 ] #from LCE
     multiplicities=np.array([1,10,2,2,2,2,1,1,2,2,1]) #hard coded, depends on which clusters are chosen in the LCE
     sites=np.array([lattice[2][2][0],lattice[0][0][0],lattice[1][0][0],lattice[2][0][0],lattice[0][1][0],lattice[1][2][0],lattice[2][3][0],lattice[3][1][0],lattice[3][2][0],lattice[3][3][0]]) #defines the sites 0-9, as indicated in notebook
@@ -107,17 +112,21 @@ def get_config_energy(lattice): #most computationally/memory heavy bit of code t
     cell_energy=energy_no_li+energy_from_li+energy_from_CE
     return cell_energy #total energy of 4x4 cell (order keV) ~=90kev
 
-def get_hop_probability(local_lattice,prefactor,kb_t,endpoint_index):
+def get_hop_probability(local_lattice,prefactor,kb_t):
     """input lattice has hopping ion on from 1,1, to 1,2, as defined by local_lattice
     returns the probability of the hop
         """
-    drift_potential=0 #in V, to apply an external field
-    drift_directions=np.array([1,0.5,-0.5,-1,-0.5,0.5])*drift_potential
-
-    hop_energy=get_jump_energy(local_lattice)
-
-    probability=prefactor*np.exp(-(hop_energy)/kb_t)
-
+    first_time=0 #toggles dicitonary option
+    if first_time==1:
+        drift_potential=0 #in V, to apply an external field
+        drift_directions=np.array([1,0.5,-0.5,-1,-0.5,0.5])*drift_potential
+        hop_energy=get_jump_energy(local_lattice)
+        probability=prefactor*math.exp(-(hop_energy)/kb_t)
+        #dictionary_builder() #build the master_dictionary and save to file
+    else:
+        local_lattice=local_lattice+2 #deals with negatives
+        lattice_key=lattice_convert(local_lattice)
+        probability=master_dictionary[lattice_key]
     return probability
 
 def get_jump_energy(initial_lattice):
@@ -128,6 +137,7 @@ def get_jump_energy(initial_lattice):
     excited_energy=get_excited_energy(initial_lattice)
     hop_energy=(excited_energy-initial_energy)
     #print  "hop energy: " +str(hop_energy)
+    print hop_energy
     return hop_energy
 
 def get_distance(input_lattice,size,lattice_constant):
@@ -172,7 +182,7 @@ def kmc_evolve(mc_lattice,hop_probability_by_ion,startpoint,endpoint):
     min_i=min([startpoint[0],endpoint[0]])-2
     min_j=min([startpoint[1],endpoint[1]])-2
     k=0#alternative to adding: for k in range(size[2])
-    dumbell_hop_probability=prefactor*np.exp(-(dumbell_hop_energy)/kb_t)
+    dumbell_hop_probability=prefactor*math.exp(-(dumbell_hop_energy)/kb_t)
 
     for i in range(min_i,max_i):
         for j in range(min_j,max_j):
@@ -197,6 +207,7 @@ def kmc_evolve(mc_lattice,hop_probability_by_ion,startpoint,endpoint):
                             hop_probability_by_site[endpoint_index]=dumbell_hop_probability
                             #dumbell_path_count+=1
                         else:
+                            time0=time.time()
                             if endpoint_index==0:
                                 if endpoint_occupancy[5]==atom_types[1][1]:
                                     local_lattice=np.array([[[mc_lattice[i-1][(j+1)%size[1]][k]],[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[(i+1)%size[0]][(j+1)%size[1]][k]],[mc_lattice[(i+2)%size[0]][(j+1)%size[0]][k]]],[[mc_lattice[i-1][j][k]],[hop_start_point],[hop_end_point],[mc_lattice[(i+2)%size[0]][j][k]]],[[mc_lattice[i-1][j-1][k]],[mc_lattice[i][j-1][k]],[mc_lattice[(i+1)%size[0]][j-1][k]],[mc_lattice[(i+2)%size[0]][j-1][k]]],[[mc_lattice[i-1][j-2][k]],[mc_lattice[i][j-2][k]],[mc_lattice[(i+1)%size[0]][j-2][k]],[mc_lattice[(i+2)%size[0]][j-2][k]]]]) #good
@@ -209,7 +220,7 @@ def kmc_evolve(mc_lattice,hop_probability_by_ion,startpoint,endpoint):
                                     local_lattice=np.array([[[mc_lattice[i-1][j][k]],[mc_lattice[i-1][(j+1)%size[1]][k]],[mc_lattice[i-1][(j+2)%size[1]][k]],[mc_lattice[i-1][(j+3)%size[1]][k]]],[[mc_lattice[i][j-1][k]],[hop_start_point],[hop_end_point],[mc_lattice[i][(j+2)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][j-2][k]],[mc_lattice[(i+1)%size[0]][j-1][k]],[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[(i+1)%size[0]][(j+1)%size[1]][k]]],[[mc_lattice[(i+2)%size[0]][j-3][k]],[mc_lattice[(i+2)%size[0]][j-2][k]],[mc_lattice[(i+2)%size[0]][j-1][k]],[mc_lattice[(i+2)%size[0]][j][k]]]]) #good
                             elif endpoint_index==2:
                                 if endpoint_occupancy[1]==atom_types[1][1]:
-                                    local_lattice=np.array([[[mc_lattice[i][j-1][k]],[mc_lattice[i-1][j][k]],[mc_lattice[i-2][(j+1)%size[1]][k]],[mc_lattice[i-3][(j+2)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][j-1][k]],[hop_start_point],[hop_end_point],[mc_lattice[i-2][(j+2)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[i-1][(j+2)%size[1]][k]],[mc_lattice[(i+3)%size[0]][j-1][k]]],[[mc_lattice[(i+2)%size[0]][j][k]],[mc_lattice[(i+1)%size[0]][(j+1)%size[1]][k]],[mc_lattice[i][(j+2)%size[1]][k]],[mc_lattice[(i+2)%size[0]][(j+2)%size[1]][k]]]])#good
+                                    local_lattice=np.array([[[mc_lattice[i][j-1][k]],[mc_lattice[i-1][j][k]],[mc_lattice[i-2][(j+1)%size[1]][k]],[mc_lattice[i-3][(j+2)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][j-1][k]],[hop_start_point],[hop_end_point],[mc_lattice[i-2][(j+2)%size[1]][k]]],[[mc_lattice[(i+2)%size[0]][j-1][k]],[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[i-1][(j+2)%size[1]][k]]],[[mc_lattice[(i+2)%size[0]][j][k]],[mc_lattice[(i+1)%size[0]][(j+1)%size[1]][k]],[mc_lattice[i][(j+2)%size[1]][k]],[mc_lattice[(i+2)%size[0]][(j+2)%size[1]][k]]]])#good
                                 elif endpoint_occupancy[3]==atom_types[1][1]:
                                     local_lattice=np.array([[[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[i-1][(j+2)%size[1]][k]],[mc_lattice[i-2][(j+3)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][j-1][k]],[hop_start_point],[hop_end_point],[mc_lattice[i-2][(j+2)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][j-2][k]],[mc_lattice[i][j-1][k]],[mc_lattice[i-1][j][k]],[mc_lattice[i-2][(j+1)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][j-3][k]],[mc_lattice[i][j-2][k]],[mc_lattice[i-1][j-1][k]],[mc_lattice[i-2][j][k]]]]) #good
                             elif endpoint_index==3:
@@ -227,7 +238,9 @@ def kmc_evolve(mc_lattice,hop_probability_by_ion,startpoint,endpoint):
                                     local_lattice=np.array([[[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[(i+2)%size[0]][j-1][k]],[mc_lattice[(i+3)%size[0]][j-2][k]]],[[mc_lattice[i-1][(j+1)%size[1]][k]],[hop_start_point],[hop_end_point],[mc_lattice[(i+2)%size[0]][j-2][k]]],[[mc_lattice[i-2][(j+1)%size[1]][k]],[mc_lattice[i-1][j][k]],[mc_lattice[i][j-1][k]],[mc_lattice[(i+1)%size[0]][j-2][k]]],[[mc_lattice[i-3][(j+1)%size[1]][k]],[mc_lattice[i-2][j][k]],[mc_lattice[i-1][j-1][k]],[mc_lattice[i][j-2][k]]]]) #good
                                 elif endpoint_occupancy[0]==atom_types[1][1]:
                                     local_lattice=np.array([[[mc_lattice[i-1][j][k]],[mc_lattice[i][j-1][k]],[mc_lattice[(i+1)%size[0]][j-2][k]],[mc_lattice[(i+2)%size[0]][j-3][k]]],[[mc_lattice[i-1][(j+1)%size[1]][k]],[hop_start_point],[hop_end_point],[mc_lattice[(i+2)%size[0]][j-2][k]]],[[mc_lattice[i-1][(j+2)%size[1]][k]],[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[(i+2)%size[0]][j-1][k]]],[[mc_lattice[i-1][(j+3)%size[1]][k]],[mc_lattice[i][(j+2)%size[1]][k]],[mc_lattice[(i+1)%size[0]][(j+1)%size[1]][k]],[mc_lattice[(i+2)%size[0]][j][k]]]])#good
-                            hop_probability_by_site[endpoint_index]=probability_multiplier*get_hop_probability(np.transpose(local_lattice,(1,0,2)),prefactor,kb_t,endpoint_index)#gets the themal probability of the hop in question
+
+                            hop_probability_by_site[endpoint_index]=probability_multiplier*get_hop_probability(np.transpose(local_lattice,(1,0,2)),prefactor,kb_t)#gets the themal probability of the hop in question
+
                             #tetrahedral_path_count+=1*probability_multiplier
                     endpoint_index=endpoint_index+1
                 hop_probability_by_ion[i][j][k]=hop_probability_by_site[:]
@@ -238,7 +251,7 @@ def kmc_evolve(mc_lattice,hop_probability_by_ion,startpoint,endpoint):
 
 def initialize_hop_probability_by_ion(mc_lattice):
     hop_probability_by_ion=np.tile(np.zeros(6),(size[0],size[1],size[2],1))
-    dumbell_hop_probability=prefactor*np.exp(-(dumbell_hop_energy)/kb_t)
+    dumbell_hop_probability=prefactor*math.exp(-(dumbell_hop_energy)/kb_t)
 
     for i in range(size[0]):#looping over elements in the array to calculate all of the probabilities. write them into hop_probability_by_ion
         for j in range(size[1]):
@@ -277,7 +290,7 @@ def initialize_hop_probability_by_ion(mc_lattice):
                                         local_lattice=np.array([[[mc_lattice[i-1][j][k]],[mc_lattice[i-1][(j+1)%size[1]][k]],[mc_lattice[i-1][(j+2)%size[1]][k]],[mc_lattice[i-1][(j+3)%size[1]][k]]],[[mc_lattice[i][j-1][k]],[hop_start_point],[hop_end_point],[mc_lattice[i][(j+2)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][j-2][k]],[mc_lattice[(i+1)%size[0]][j-1][k]],[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[(i+1)%size[0]][(j+1)%size[1]][k]]],[[mc_lattice[(i+2)%size[0]][j-3][k]],[mc_lattice[(i+2)%size[0]][j-2][k]],[mc_lattice[(i+2)%size[0]][j-1][k]],[mc_lattice[(i+2)%size[0]][j][k]]]]) #good
                                 elif endpoint_index==2:
                                     if endpoint_occupancy[1]==atom_types[1][1]:
-                                        local_lattice=np.array([[[mc_lattice[i][j-1][k]],[mc_lattice[i-1][j][k]],[mc_lattice[i-2][(j+1)%size[1]][k]],[mc_lattice[i-3][(j+2)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][j-1][k]],[hop_start_point],[hop_end_point],[mc_lattice[i-2][(j+2)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[i-1][(j+2)%size[1]][k]],[mc_lattice[(i+3)%size[0]][j-1][k]]],[[mc_lattice[(i+2)%size[0]][j][k]],[mc_lattice[(i+1)%size[0]][(j+1)%size[1]][k]],[mc_lattice[i][(j+2)%size[1]][k]],[mc_lattice[(i+2)%size[0]][(j+2)%size[1]][k]]]])#good
+                                        local_lattice=np.array([[[mc_lattice[i][j-1][k]],[mc_lattice[i-1][j][k]],[mc_lattice[i-2][(j+1)%size[1]][k]],[mc_lattice[i-3][(j+2)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][j-1][k]],[hop_start_point],[hop_end_point],[mc_lattice[i-2][(j+2)%size[1]][k]]],[[mc_lattice[(i+2)%size[0]][j-1][k]],[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[i-1][(j+2)%size[1]][k]]],[[mc_lattice[(i+2)%size[0]][j][k]],[mc_lattice[(i+1)%size[0]][(j+1)%size[1]][k]],[mc_lattice[i][(j+2)%size[1]][k]],[mc_lattice[(i+2)%size[0]][(j+2)%size[1]][k]]]])#good
                                     elif endpoint_occupancy[3]==atom_types[1][1]:
                                         local_lattice=np.array([[[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[i-1][(j+2)%size[1]][k]],[mc_lattice[i-2][(j+3)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][j-1][k]],[hop_start_point],[hop_end_point],[mc_lattice[i-2][(j+2)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][j-2][k]],[mc_lattice[i][j-1][k]],[mc_lattice[i-1][j][k]],[mc_lattice[i-2][(j+1)%size[1]][k]]],[[mc_lattice[(i+1)%size[0]][j-3][k]],[mc_lattice[i][j-2][k]],[mc_lattice[i-1][j-1][k]],[mc_lattice[i-2][j][k]]]]) #good
                                 elif endpoint_index==3:
@@ -295,7 +308,8 @@ def initialize_hop_probability_by_ion(mc_lattice):
                                         local_lattice=np.array([[[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[(i+2)%size[0]][j-1][k]],[mc_lattice[(i+3)%size[0]][j-2][k]]],[[mc_lattice[i-1][(j+1)%size[1]][k]],[hop_start_point],[hop_end_point],[mc_lattice[(i+2)%size[0]][j-2][k]]],[[mc_lattice[i-2][(j+1)%size[1]][k]],[mc_lattice[i-1][j][k]],[mc_lattice[i][j-1][k]],[mc_lattice[(i+1)%size[0]][j-2][k]]],[[mc_lattice[i-3][(j+1)%size[1]][k]],[mc_lattice[i-2][j][k]],[mc_lattice[i-1][j-1][k]],[mc_lattice[i][j-2][k]]]]) #good
                                     elif endpoint_occupancy[0]==atom_types[1][1]:
                                         local_lattice=np.array([[[mc_lattice[i-1][j][k]],[mc_lattice[i][j-1][k]],[mc_lattice[(i+1)%size[0]][j-2][k]],[mc_lattice[(i+2)%size[0]][j-3][k]]],[[mc_lattice[i-1][(j+1)%size[1]][k]],[hop_start_point],[hop_end_point],[mc_lattice[(i+2)%size[0]][j-2][k]]],[[mc_lattice[i-1][(j+2)%size[1]][k]],[mc_lattice[i][(j+1)%size[1]][k]],[mc_lattice[(i+1)%size[0]][j][k]],[mc_lattice[(i+2)%size[0]][j-1][k]]],[[mc_lattice[i-1][(j+3)%size[1]][k]],[mc_lattice[i][(j+2)%size[1]][k]],[mc_lattice[(i+1)%size[0]][(j+1)%size[1]][k]],[mc_lattice[(i+2)%size[0]][j][k]]]])#good
-                                hop_probability_by_site[endpoint_index]=probability_multiplier*get_hop_probability(np.transpose(local_lattice,(1,0,2)),prefactor,kb_t,endpoint_index)#gets the themal probability of the hop in question
+
+                                hop_probability_by_site[endpoint_index]=probability_multiplier*get_hop_probability(np.transpose(local_lattice,(1,0,2)),prefactor,kb_t)#gets the themal probability of the hop in question
                                 #tetrahedral_path_count+=1*probability_multiplier
 
                         endpoint_index=endpoint_index+1
@@ -315,7 +329,7 @@ def kmc_step(mc_lattice,input_distance_lattice,input_hop_probability_by_ion):
     time_step_per_hop=0
     time_step_per_kmcstep=0
     k=0
-    dumbell_hop_probability=prefactor*np.exp(-(dumbell_hop_energy)/kb_t)
+    dumbell_hop_probability=prefactor*math.exp(-(dumbell_hop_energy)/kb_t)
 
 
 
@@ -353,7 +367,7 @@ def presim_step(mc_lattice,input_hop_probability_by_ion):#lite version of kmc_st
     time_step_per_hop=0
     time_step_per_kmcstep=0
     total_hop_probability=np.zeros(6)
-    dumbell_hop_probability=prefactor*np.exp(-(dumbell_hop_energy)/kb_t)
+    dumbell_hop_probability=prefactor*math.exp(-(dumbell_hop_energy)/kb_t)
 
 
     for hop in range(int(size[0]*size[1]*size[2]*Li_concentration)):
@@ -386,18 +400,63 @@ def presim_step(mc_lattice,input_hop_probability_by_ion):#lite version of kmc_st
 #print y-x
 
 
+def lattice_convert(lattice):
+    """function that takes a lattice and converts it into a 16 digit int """
+
+    lattice=np.reshape(lattice,16).astype(int).astype(str)
+    s="".join(lattice)
+    return int(s)
+
+def dictionary_builder(): #creates a dictionary that contains the hop probailities for all of the lattice combinations
+    master_dictionary={}
+    dict_lattice=np.array([[1.],  [1.],  [1.],  [1.], [1.],  [-1.],  [1.],  [1.], [1.],  [1.],  [1.],  [1.], [1.],  [1.],  [1.],  [1.]])+2
+    dict_values=[1,3]
+    for a0 in dict_values: #ignore some sites (start (5), end(9) and NN(10))
+        dict_lattice[0]=a0
+        for a1 in dict_values:
+            dict_lattice[1]=a1
+            for a2 in dict_values:
+                dict_lattice[2]=a2
+                for a3 in dict_values:
+                    dict_lattice[3]=a3
+                    for a4 in dict_values:
+                        dict_lattice[4]=a4
+                        for a7 in dict_values:
+                            dict_lattice[7]=a7
+                            for a8 in dict_values:
+                                dict_lattice[8]=a8
+                                for a10 in dict_values:
+                                    dict_lattice[6]=a10
+                                    for a11 in dict_values:
+                                        dict_lattice[11]=a11
+                                        for a12 in dict_values:
+                                            dict_lattice[12]=a12
+                                            for a13 in dict_values:
+                                                dict_lattice[13]=a13
+                                                for a14 in dict_values:
+                                                    dict_lattice[14]=a14
+                                                    for a15 in dict_values:
+                                                        dict_lattice[15]=a15
+                                                        dictionary_key=lattice_convert(dict_lattice) #the tag for each structure
+                                                        working_lattice= (np.reshape(dict_lattice,(4,4,1)))-2
+                                                        master_dictionary[dictionary_key]=get_hop_probability(working_lattice,prefactor,kb_t) #write the probailities to the dicitonary
+    pickle.dump(master_dictionary, open("master_dictionary.p", "wb+"), pickle.HIGHEST_PROTOCOL) #saves dictionary to pickle
 
 
 
+
+
+
+master_dictionary=pickle.load(open("master_dictionary.p", "rb"))
 
 diffusion_coefficient_vs_concentration=[]
 #for averaging_iterations in [1]:#range(1, 20,2):
 averaging_iterations=0 #loop over this
 size=[0,0,0]
-dimensions=[10] #loop over this
-simulation_iterations=10  #how many steps
+dimensions=[50] #loop over this
+simulation_iterations=5000  #how many steps
 presimulation_iterations=0 #how many pre simulation steps
-concentrations= [0.1]#[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]#np.array(range(1,100,6))/100. # looping over these too
+concentrations= [0.5]#[0.01,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]#np.array(range(1,100,6))/100. # looping over these too
 average_path_counts=[]
 for dimension in dimensions:# range(5,65,8): #to check size dependence of parameters
     size[0]=dimension
@@ -436,7 +495,7 @@ for dimension in dimensions:# range(5,65,8): #to check size dependence of parame
                 (mc_lattice,hop_probability_by_ion)=presim_step(mc_lattice,hop_probability_by_ion)
                 if averaging_step%10==0:
                     print "presimulation step:" +str(averaging_step)
-                #colorsquare(np.transpose(mc_lattice)[0],"lattice_pictures/"+str(averaging_step)+".png") $to see the lattice
+                #colorsquare(np.transpose(mc_lattice)[0],"lattice_pictures/"+str(averaging_step)+".png") #to see the lattice
 
                 averaging_step+=1
 
@@ -455,15 +514,14 @@ for dimension in dimensions:# range(5,65,8): #to check size dependence of parame
             #path_counter=[]
             while simulation < simulation_iterations: #how many kmc steps to take
                 (mc_lattice,distance_lattice,time_step,hop_probability_by_ion)=kmc_step(mc_lattice,distance_lattice,hop_probability_by_ion)
-                if simulation%10==0:
+                if simulation%50==0:
                     print "simulation step: " +str( simulation)
-                #colorsquare(np.transpose(mc_lattice)[0],"lattice_pictures/"+str(simulation+10)+".png")
+                    colorsquare(np.transpose(mc_lattice)[0],"lattice_pictures/"+str(simulation+10)+".png")
 
                 total_time=total_time+time_step #the total time taken
                 diffusion_cycle,distances_out=get_diffusion_coefficient(distance_lattice,size,total_time,lattice_constant,Li_concentration) #getting the diffusion Coefficient, and the distances travelled by each atom
                 r_squared_vs_time=np.append(r_squared_vs_time,np.average(distances_out))
                 x_axis_times=np.append(x_axis_times,total_time)
-
                 simulation+=1
             print "total time is: " +str(total_time)
             #average_path_counts=np.append(average_path_counts,(np.average(path_counter[::3]), np.average(path_counter[1::3]), np.average(path_counter[2::3])))
