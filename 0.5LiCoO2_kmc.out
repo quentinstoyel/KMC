@@ -1,0 +1,11 @@
+Size:[50, 50, 1]
+ Concentration:0.5
+ kbT:0.025
+ Simulation parameters: 
+ Presimulation cycles: 100
+ Simulation Cycles: 500
+
+ RESULTS 
+Averaged Diffusion Coefficients:[ 766.04851918]
+ Variables: [ 0.5]
+ Errors on D_star: [ 783.03451834]
