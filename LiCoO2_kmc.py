@@ -23,7 +23,7 @@ start_timer = time.time()
 """Initiallizing useful variables"""
 atom_types = ([["Li", "Vac"], [-1, 1]]
               )  # what values are assigned to which atoms in the matrix
-kb_t = 0.025851  # kb=~8.6*10^-5, kb_t at 300K
+kb_t = 0.025  # kb=~8.6*10^-5
 prefactor = 10**(13)  # entropic factor from VderV paper
 # in ev, constant, hop energy when the two sites on each side are occupied
 dumbell_hop_energy = 1.48
@@ -32,9 +32,9 @@ dumbell_hop_probability = prefactor * math.exp(-(dumbell_hop_energy) / kb_t)
 lattice_constant = 2.8334 * 10**(-8)  # in cm
 hop_histogram = np.zeros(6)
 
-
 """Building the Dictionary"""
 
+"""Building the Dictionary"""
 
 def get_excited_energy(lattice):
     """
@@ -336,7 +336,6 @@ def kmc_evolve(mc_lattice, hop_probability_matrix, startpoint, endpoint, use_ini
                         hop_probability_by_site[endpoint_index] = probability_multiplier * get_hop_probability(np.transpose(
                             local_lattice, (1, 0, 2)), prefactor, kb_t)  # gets the themal probability of the hop in question
 
-
                         # tetrahedral_path_count+=1*probability_multiplier
                 endpoint_index = endpoint_index + 1
             hop_probability_matrix[i][j][k] = hop_probability_by_site[:]
@@ -598,9 +597,9 @@ for dimension in dimensions:
             diffusion_coefficient_j_averaging), np.std(diffusion_coefficient_j_averaging)]
 
         diffusion_coefficient_vs_concentration = np.append(diffusion_coefficient_vs_concentration, [
-                                                           final_diffusion_coefficient[0], dimension, final_diffusion_coefficient[1]])  # need to put in masterloop variable here
+                                                           final_diffusion_coefficient[0], Li_concentration, final_diffusion_coefficient[1]])  # need to put in masterloop variable here
         diffusion_coefficient_j_vs_concentration = np.append(diffusion_coefficient_j_vs_concentration, [
-                                                             final_diffusion_coefficient_j[0], dimension, final_diffusion_coefficient_j[1]])  # need to put in masterloop variable here
+                                                             final_diffusion_coefficient_j[0], Li_concentration, final_diffusion_coefficient_j[1]])  # need to put in masterloop variable here
 
 
 """Stop timer"""
