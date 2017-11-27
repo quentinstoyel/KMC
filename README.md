@@ -3,7 +3,7 @@ Kinetic Monte Carlo Code for Lithium Diffussion
 
 General Structure of the code.
 
-Creats a 2d Hexagonal lattice (defined by "size/dimension") with a random distribution of Li atoms on it. 
+Creats a 2d Hexagonal lattice (defined by "size/dimension") with a random distribution of Li atoms on it.
 Performs a number of KMC steps on the lattice, each step consists of:
 1. determining which Li atoms can hop
 2. for each of those, determining the probability of it making that hop
