@@ -1,0 +1,97 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+LiCoO2_kmc.py	../LiCoO2_kmc.py	1;"	kind:file	line:1
+Li_atoms	../LiCoO2_kmc.py	/^            Li_atoms = 0$/;"	kind:variable	line:526
+all	../LiCoO2_kmc.py	/^import itertools  # to hide all my for loop shenannigans inside of functions$/;"	kind:namespace	line:19
+atom_types	../LiCoO2_kmc.py	/^atom_types = ([["Li", "Vac"], [-1, 1]]$/;"	kind:variable	line:25
+average_path_counts	../LiCoO2_kmc.py	/^average_path_counts = []$/;"	kind:variable	line:490
+averageing_iteration	../LiCoO2_kmc.py	/^        averageing_iteration = 0$/;"	kind:variable	line:509
+averaging_iterations	../LiCoO2_kmc.py	/^averaging_iterations =1   # loop over this$/;"	kind:variable	line:483
+averaging_step	../LiCoO2_kmc.py	/^            averaging_step = 0$/;"	kind:variable	line:518
+colorsquare	../LiCoO2_kmc.py	/^def colorsquare(s, filename):  # to plot the lattices as you go, and save as png's$/;"	kind:function	line:406
+combinations	../LiCoO2_kmc.py	/^from itertools import combinations$/;"	kind:namespace	line:17
+concentration	../diffusion_vs_concentration_plotter.py	/^concentration= [0.1,  0.12, 0.14, 0.16, 0.18, 0.2,  0.22, 0.24, 0.26, 0.28, 0.3,  0.32, 0.34, 0.36, 0.38, 0.4,  0.42, 0.44, 0.46, 0.48, 0.5,  0.52, 0.54, 0.56, 0.58, 0.6,  0.62, 0.64, 0.66, 0.68, 0.7,  0.72, 0.74, 0.76, 0.78, 0.8, 0.82, 0.84, 0.86, 0.88, 0.9,  0.92, 0.94]$/;"	kind:variable	line:9
+concentrations	../LiCoO2_kmc.py	/^concentrations = [0.1,0.12,0.14]#np.array(range(10,100,2))\/100. # looping over these too$/;"	kind:variable	line:489
+dictionary_builder	../LiCoO2_kmc.py	/^def dictionary_builder():  # creates a dictionary that contains the hop probailities for all of the lattice combinations, must be rerun for each temperature$/;"	kind:function	line:165
+diffusion_coefficient_averaging	../LiCoO2_kmc.py	/^            diffusion_coefficient_averaging = np.append($/;"	kind:variable	line:578
+diffusion_coefficient_averaging	../LiCoO2_kmc.py	/^        diffusion_coefficient_averaging = []$/;"	kind:variable	line:511
+diffusion_coefficient_j_averaging	../LiCoO2_kmc.py	/^            diffusion_coefficient_j_averaging = np.append($/;"	kind:variable	line:580
+diffusion_coefficient_j_averaging	../LiCoO2_kmc.py	/^        diffusion_coefficient_j_averaging = []  # same thing but for other coefficient$/;"	kind:variable	line:512
+diffusion_coefficient_j_vs_concentration	../LiCoO2_kmc.py	/^        diffusion_coefficient_j_vs_concentration = np.append(diffusion_coefficient_j_vs_concentration, [$/;"	kind:variable	line:602
+diffusion_coefficient_j_vs_concentration	../LiCoO2_kmc.py	/^diffusion_coefficient_j_vs_concentration = []$/;"	kind:variable	line:481
+diffusion_coefficient_vs_concentration	../LiCoO2_kmc.py	/^        diffusion_coefficient_vs_concentration = np.append(diffusion_coefficient_vs_concentration, [$/;"	kind:variable	line:600
+diffusion_coefficient_vs_concentration	../LiCoO2_kmc.py	/^diffusion_coefficient_vs_concentration = []$/;"	kind:variable	line:480
+diffusion_j	../diffusion_vs_concentration_plotter.py	/^diffusion_j=np.array([1.73707729e-04,  2.79650980e-04,  2.93175453e-04,  1.00252709e-03,  4.07802597e-04,  5.91541554e-04,  5.97614094e-03,  1.37458977e-02,  9.91182042e-03,  8.98398701e-03,  4.51137986e+00,  4.25783834e-01,  1.80362970e+00,  3.76864581e-01,  5.08961738e+01,  4.89987019e+01,  3.94553337e+01,  9.93131541e+01,  2.05382131e+02,  1.93199769e+02,  1.05373099e+02,  1.18525087e+02,  5.92906873e+02,  4.50313044e+02,  5.12279449e+02,  1.53023341e+02,  3.84846675e+02,  2.50734831e+02,  6.35956794e+02,  3.93447567e+02,  5.70776444e+02,  5.98058496e+02,  4.75592331e+02,  3.88202596e+02,  3.69623256e+02,  3.54499636e+02,  1.28208021e+02,  8.73349226e+01,  8.06320633e+01,  3.72856712e+01,  2.58261507e+01,  6.14737784e+00,  1.51189663e+00])$/;"	kind:variable	line:7
+diffusion_j_v_size	../diffusion_vs_concentration_plotter.py	/^diffusion_j_v_size=np.array([4.24872183e-25, 5.00000000e+00, 6.05844933e-25, 2.64921784e-23, 1.00000000e+01, 2.46277919e-23, 8.51439173e-23, 1.50000000e+01, 6.78062347e-23, 1.03215996e-20, 2.00000000e+01, 3.14009295e-20, 1.62436235e-21, 2.50000000e+01, 2.44853646e-21, 2.99190190e-21, 3.00000000e+01, 2.74464413e-21, 1.04591043e-20, 4.00000000e+01, 7.42595267e-21, 5.90749859e-20, 5.00000000e+01, 4.09023543e-20])$/;"	kind:variable	line:14
+diffusion_star	../diffusion_vs_concentration_plotter.py	/^diffusion_star=np.array([3.67006038e-04, 8.46649028e-04, 6.18642015e-04, 8.96876630e-04, 5.44037924e-04, 8.75167674e-04, 5.73895355e-03, 1.34382783e-02, 8.57456494e-03, 1.26929806e-02, 4.58225754e+00, 4.08193193e-01, 1.80941315e+00, 3.90496358e-01, 5.10929191e+01, 5.17237428e+01, 2.83760811e+01, 1.20056302e+02, 1.79180509e+02, 2.02614814e+02, 1.96283724e+02, 2.10877457e+02, 4.47098922e+02, 5.58114853e+02, 4.36351055e+02, 2.96166632e+02, 5.48887187e+02, 3.04034702e+02, 8.14401402e+02, 3.95518261e+02, 7.60763932e+02, 6.32176279e+02, 6.09505420e+02, 5.01972902e+02, 5.09241716e+02, 3.80633410e+02, 1.88071666e+02, 1.12264929e+02, 1.33773139e+02, 3.91336578e+01, 2.84553246e+01, 6.33727457e+00, 1.55164792e+00])$/;"	kind:variable	line:5
+diffusion_star_v_size	../diffusion_vs_concentration_plotter.py	/^diffusion_star_v_size=np.array([2.75144068e-25, 5.00000000e+00, 3.27727689e-25, 1.49219039e-23, 1.00000000e+01, 2.32563973e-23, 2.04213395e-23, 1.50000000e+01, 1.19252698e-23, 2.95274785e-21, 2.00000000e+01, 9.13268956e-21, 2.40707915e-22, 2.50000000e+01, 4.96769298e-22, 3.28778466e-22, 3.00000000e+01, 2.06257478e-22, 3.26108854e-21, 4.00000000e+01, 6.08106872e-21, 3.99067286e-21, 5.00000000e+01, 3.81173490e-21])$/;"	kind:variable	line:13
+diffusion_vs_concentration_plotter.py	../diffusion_vs_concentration_plotter.py	1;"	kind:file	line:1
+dimensions	../LiCoO2_kmc.py	/^dimensions = [10]  # loop over this$/;"	kind:variable	line:485
+distance_lattice	../LiCoO2_kmc.py	/^            distance_lattice = np.tile($/;"	kind:variable	line:516
+dumbell_hop_energy	../LiCoO2_kmc.py	/^dumbell_hop_energy = 1.48$/;"	kind:variable	line:30
+dumbell_hop_probability	../LiCoO2_kmc.py	/^dumbell_hop_probability = prefactor * math.exp(-(dumbell_hop_energy) \/ kb_t)$/;"	kind:variable	line:32
+error_on_d_j	../diffusion_vs_concentration_plotter.py	/^error_on_d_j=np.array([6.89289652e-04,  5.40330962e-04,  5.89631729e-04,  2.60972706e-03,  6.38861935e-04,  1.08485425e-03,  1.58441185e-02,  3.66761005e-02,  1.96592117e-02,  1.96139969e-02,  1.98939664e+01,  1.58915763e+00,  4.50747303e+00,  1.03264632e+00,  1.78763582e+02,  1.71358346e+02,  8.66986103e+01,  1.94763689e+02,  6.09425664e+02,  4.52089741e+02,  1.53613491e+02,  2.50686167e+02,  7.52604558e+02,  4.20487412e+02,  4.87438940e+02,  1.54121672e+02,  4.62361083e+02,  2.37271541e+02,  7.29558994e+02,  4.98434740e+02,  6.08184599e+02,  6.71276846e+02,  8.00491680e+02,  5.22052016e+02,  3.03030095e+02,  4.77416955e+02,  1.37197662e+02,  1.00924178e+02,  8.04840954e+01,  6.03560137e+01,  3.46462154e+01,  1.64786907e+01,  6.76140729e+00])$/;"	kind:variable	line:8
+error_on_d_star	../diffusion_vs_concentration_plotter.py	/^error_on_d_star=np.array([1.26421504e-03,  1.43632375e-03,  1.28948344e-03,  2.55333212e-03,  6.43946874e-04,  1.89171434e-03,  1.62866890e-02,  2.19559833e-02,  1.37727732e-02,  2.38071866e-02,  2.01957098e+01,  1.59787216e+00,  3.98669083e+00,  1.05401230e+00,  1.79751879e+02,  1.71887496e+02,  4.72834058e+01,  2.29914132e+02,  3.23249846e+02,  3.87657839e+02,  4.35255438e+02,  2.88144700e+02,  5.51489268e+02,  6.10049511e+02,  3.15240402e+02,  3.18216811e+02,  4.76192236e+02,  2.18197722e+02,  1.11071299e+03,  3.13984760e+02,  4.47054064e+02,  7.80775185e+02,  5.61407482e+02,  8.43163324e+02,  5.13528220e+02,  3.24462072e+02,  1.37836558e+02,  1.23754998e+02,  1.13432356e+02,  6.33643756e+01,  3.70327310e+01,  1.70017721e+01,  6.93918047e+00])$/;"	kind:variable	line:6
+final_diffusion_coefficient	../LiCoO2_kmc.py	/^        final_diffusion_coefficient = [np.average($/;"	kind:variable	line:595
+final_diffusion_coefficient_j	../LiCoO2_kmc.py	/^        final_diffusion_coefficient_j = [np.average($/;"	kind:variable	line:597
+for	../LiCoO2_kmc.py	/^import itertools  # to hide all my for loop shenannigans inside of functions$/;"	kind:namespace	line:19
+functions	../LiCoO2_kmc.py	/^import itertools  # to hide all my for loop shenannigans inside of functions$/;"	kind:namespace	line:19
+get_config_energy	../LiCoO2_kmc.py	/^def get_config_energy(input_lattice):$/;"	kind:function	line:92
+get_diffusion_coefficient	../LiCoO2_kmc.py	/^def get_diffusion_coefficient(distance_lattice, mc_lattice_size, time_diffusing, lattice_constant, Li_concentration):$/;"	kind:function	line:450
+get_distance	../LiCoO2_kmc.py	/^def get_distance(input_lattice, mc_lattice_size, lattice_constant):$/;"	kind:function	line:419
+get_excited_energy	../LiCoO2_kmc.py	/^def get_excited_energy(lattice):$/;"	kind:function	line:40
+get_hop_probability	../LiCoO2_kmc.py	/^def get_hop_probability(local_lattice, prefactor, kb_t):$/;"	kind:function	line:206
+hide	../LiCoO2_kmc.py	/^import itertools  # to hide all my for loop shenannigans inside of functions$/;"	kind:namespace	line:19
+hop_histogram	../LiCoO2_kmc.py	/^hop_histogram = np.zeros(6)$/;"	kind:variable	line:34
+hop_probability_matrix	../LiCoO2_kmc.py	/^            hop_probability_matrix = kmc_evolve($/;"	kind:variable	line:536
+hop_probability_matrix	../LiCoO2_kmc.py	/^    hop_probability_matrix = np.tile($/;"	kind:variable	line:503
+i	../LiCoO2_kmc.py	/^                i = np.random.randint(0, mc_lattice_size[0])$/;"	kind:variable	line:528
+inside	../LiCoO2_kmc.py	/^import itertools  # to hide all my for loop shenannigans inside of functions$/;"	kind:namespace	line:19
+itertools	../LiCoO2_kmc.py	/^import itertools  # to hide all my for loop shenannigans inside of functions$/;"	kind:namespace	line:19
+j	../LiCoO2_kmc.py	/^                j = np.random.randint(0, mc_lattice_size[1])$/;"	kind:variable	line:529
+k	../LiCoO2_kmc.py	/^                k = np.random.randint(0, mc_lattice_size[2])$/;"	kind:variable	line:530
+kb_t	../LiCoO2_kmc.py	/^kb_t = 0.025  # kb=~8.6*10^-5$/;"	kind:variable	line:27
+kmc_evolve	../LiCoO2_kmc.py	/^def kmc_evolve(mc_lattice, hop_probability_matrix, startpoint, endpoint, use_initialize_mode):$/;"	kind:function	line:236
+kmc_step	../LiCoO2_kmc.py	/^def kmc_step(mc_lattice, input_distance_lattice, input_hop_probability_matrix, use_presimulation_mode):$/;"	kind:function	line:350
+lattice_constant	../LiCoO2_kmc.py	/^lattice_constant = 2.8334 * 10**(-8)  # in cm$/;"	kind:variable	line:33
+lattice_convert	../LiCoO2_kmc.py	/^def lattice_convert(lattice):$/;"	kind:function	line:157
+loop	../LiCoO2_kmc.py	/^import itertools  # to hide all my for loop shenannigans inside of functions$/;"	kind:namespace	line:19
+master_dictionary	../LiCoO2_kmc.py	/^master_dictionary = pickle.load(open("master_dictionary.p", "rb"))$/;"	kind:variable	line:477
+math	../LiCoO2_kmc.py	/^import math$/;"	kind:namespace	line:15
+matplotlib	../LiCoO2_kmc.py	/^import matplotlib.pyplot as plt$/;"	kind:namespace	line:11
+matplotlib	../diffusion_vs_concentration_plotter.py	/^import matplotlib.pyplot as plt$/;"	kind:namespace	line:2
+mc_lattice	../LiCoO2_kmc.py	/^            mc_lattice = mc_lattice + np.float32(atom_types[1][1])$/;"	kind:variable	line:525
+mc_lattice	../LiCoO2_kmc.py	/^            mc_lattice = np.zeros($/;"	kind:variable	line:522
+mc_lattice_size	../LiCoO2_kmc.py	/^mc_lattice_size = [0, 0, 0]$/;"	kind:variable	line:484
+my	../LiCoO2_kmc.py	/^import itertools  # to hide all my for loop shenannigans inside of functions$/;"	kind:namespace	line:19
+n_sites	../LiCoO2_kmc.py	/^    n_sites = mc_lattice_size[0] * mc_lattice_size[1] * mc_lattice_size[2]$/;"	kind:variable	line:505
+np	../LiCoO2_kmc.py	/^import numpy as np$/;"	kind:namespace	line:10
+np	../diffusion_vs_concentration_plotter.py	/^import numpy as np$/;"	kind:namespace	line:1
+of	../LiCoO2_kmc.py	/^import itertools  # to hide all my for loop shenannigans inside of functions$/;"	kind:namespace	line:19
+output_file	../LiCoO2_kmc.py	/^output_file = open('LiCoO2_kmc.out', 'w')  # the results file$/;"	kind:variable	line:492
+output_matrix	../LiCoO2_kmc.py	/^output_matrix=np.append(np.reshape(diffusion_coefficient_vs_concentration,(-1,3)), zip(diffusion_coefficient_j_vs_concentration[::3],diffusion_coefficient_j_vs_concentration[2::3]),-1)$/;"	kind:variable	line:616
+pickle	../LiCoO2_kmc.py	/^import pickle$/;"	kind:namespace	line:18
+plt	../LiCoO2_kmc.py	/^import matplotlib.pyplot as plt$/;"	kind:namespace	line:11
+plt	../diffusion_vs_concentration_plotter.py	/^import matplotlib.pyplot as plt$/;"	kind:namespace	line:2
+prefactor	../LiCoO2_kmc.py	/^prefactor = 10**(13)  # entropic factor from VderV paper$/;"	kind:variable	line:28
+presimulation_iterations	../LiCoO2_kmc.py	/^presimulation_iterations = 100  # how many pre simulation steps$/;"	kind:variable	line:487
+random	../LiCoO2_kmc.py	/^import random$/;"	kind:namespace	line:12
+re	../LiCoO2_kmc.py	/^import re$/;"	kind:namespace	line:16
+shenannigans	../LiCoO2_kmc.py	/^import itertools  # to hide all my for loop shenannigans inside of functions$/;"	kind:namespace	line:19
+simulation	../LiCoO2_kmc.py	/^            simulation = 0$/;"	kind:variable	line:519
+simulation_iterations	../LiCoO2_kmc.py	/^simulation_iterations = 100  # how many steps$/;"	kind:variable	line:486
+start_timer	../LiCoO2_kmc.py	/^start_timer = time.time()$/;"	kind:variable	line:22
+stop_timer	../LiCoO2_kmc.py	/^stop_timer = time.time()$/;"	kind:variable	line:607
+sys	../LiCoO2_kmc.py	/^import sys$/;"	kind:namespace	line:14
+time	../LiCoO2_kmc.py	/^import time$/;"	kind:namespace	line:13
+to	../LiCoO2_kmc.py	/^import itertools  # to hide all my for loop shenannigans inside of functions$/;"	kind:namespace	line:19
+total_time	../LiCoO2_kmc.py	/^                total_time = total_time + time_step  # the total time taken$/;"	kind:variable	line:570
+total_time	../LiCoO2_kmc.py	/^            total_time = 0$/;"	kind:variable	line:520
+use_initialize_mode	../LiCoO2_kmc.py	/^            use_initialize_mode = False$/;"	kind:variable	line:538
+use_initialize_mode	../LiCoO2_kmc.py	/^            use_initialize_mode = True$/;"	kind:variable	line:534
+use_presimulation_mode	../LiCoO2_kmc.py	/^            use_presimulation_mode = False$/;"	kind:variable	line:548
+use_presimulation_mode	../LiCoO2_kmc.py	/^            use_presimulation_mode = True$/;"	kind:variable	line:539

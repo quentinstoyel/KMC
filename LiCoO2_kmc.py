@@ -13,6 +13,7 @@ import random
 import time
 import sys
 import math
+import re
 from itertools import combinations
 import pickle
 import itertools  # to hide all my for loop shenannigans inside of functions
@@ -479,13 +480,13 @@ master_dictionary = pickle.load(open("master_dictionary.p", "rb"))
 diffusion_coefficient_vs_concentration = []
 diffusion_coefficient_j_vs_concentration = []
 # for averaging_iterations in [1]:#range(1, 20,2):
-averaging_iterations = 100  # loop over this
+averaging_iterations =1   # loop over this
 mc_lattice_size = [0, 0, 0]
-dimensions = [50]  # loop over this
-simulation_iterations = 2000  # how many steps
-presimulation_iterations = 1000  # how many pre simulation steps
+dimensions = [10]  # loop over this
+simulation_iterations = 100  # how many steps
+presimulation_iterations = 100  # how many pre simulation steps
 
-concentrations = np.array(range(50,150,2))/500. # looping over these too
+concentrations = [0.1,0.12,0.14]#np.array(range(10,100,2))/100. # looping over these too
 average_path_counts = []
 
 output_file = open('LiCoO2_kmc.out', 'w')  # the results file
@@ -605,13 +606,19 @@ for dimension in dimensions:
 """Stop timer"""
 stop_timer = time.time()
 
-output_file.write('Averaged Diffusion star Coefficients:' + str(diffusion_coefficient_vs_concentration[::3]) + '\n Variables: ' + str(
-    diffusion_coefficient_vs_concentration[1::3]) + '\n Errors on D_star: ' + str(diffusion_coefficient_vs_concentration[2::3]))
-output_file.write('Averaged Diffusion J Coefficients:' + str(diffusion_coefficient_j_vs_concentration[::3]) + '\n Variables: ' + str(
-    diffusion_coefficient_j_vs_concentration[1::3]) + '\n Errors on D_star: ' + str(diffusion_coefficient_j_vs_concentration[2::3]))
-output_file.write("\n\n Total Time: " + str(stop_timer - start_timer))
-
+output_file.write("\n\n Total Time: " + str(stop_timer - start_timer)+"\n \n")
 output_file.write("\n\n\n END\n")
+
+output_file.write(" d_star  variable error_d_star d_j error_d_j \n")
+
+
+
+output_matrix=np.append(np.reshape(diffusion_coefficient_vs_concentration,(-1,3)), zip(diffusion_coefficient_j_vs_concentration[::3],diffusion_coefficient_j_vs_concentration[2::3]),-1)
+print output_matrix
+output_file.write(re.sub('[\[\]]', '', str(output_matrix).strip().replace("\n   ","")))
+
+
+
 output_file.close()
 
 
@@ -619,7 +626,7 @@ print "diffusion_coefficient_vs_concentration is: " + str(diffusion_coefficient_
 print "diffusion_coefficient_j_vs_concentration is: " + str(diffusion_coefficient_j_vs_concentration)
 
 
-plt.figure()
+#plt.figure()
 # plt.plot(concentrations,average_path_counts[::3])
 # plt.plot(concentrations,average_path_counts[1::3])
 # plt.plot(concentrations,average_path_counts[2::3])

@@ -1,69 +1,25 @@
 Size:[0, 0, 0]
  kbT:0.025
  Simulation parameters: 
- Presimulation cycles: 50
- Simulation Cycles: 1000
+ Presimulation cycles: 100
+ Simulation Cycles: 100
 
  RESULTS 
-Li concentration: 0.25. Diffusion_coefficients at this concentration: [  4.49701078e-25   1.89523933e-25   2.20978988e-25   0.00000000e+00
-   0.00000000e+00   8.52753204e-25   9.60018591e-25   2.77509579e-27
-   2.67207292e-25   0.00000000e+00   8.36265645e-26]
-Li concentration: 0.25. Diffusion_coefficient J at this concentration: [  1.82216541e-24   1.81942976e-25   2.12139828e-25   0.00000000e+00
-   0.00000000e+00   8.18643076e-25   1.38242677e-24   5.62419413e-27
-   2.03077542e-25   0.00000000e+00   4.75742233e-26]
-Li concentration: 0.25. Diffusion_coefficients at this concentration: [  8.59748455e-23   8.39199643e-24   1.13138270e-23   2.12400319e-23
-   6.93853338e-24   7.10777521e-24   2.89808415e-24   3.10875704e-24
-   1.54184840e-23   0.00000000e+00   1.74860831e-24]
-Li concentration: 0.25. Diffusion_coefficient J at this concentration: [  2.60743384e-23   5.67508759e-23   1.05244903e-24   6.82466600e-23
-   2.23461590e-23   5.96692579e-23   4.17397025e-24   3.10875704e-24
-   4.07488505e-23   0.00000000e+00   9.24264393e-24]
-Li concentration: 0.25. Diffusion_coefficients at this concentration: [  2.45180086e-23   1.90221526e-23   4.51663078e-23   2.65941855e-23
-   5.97280936e-24   8.91210395e-24   1.08726213e-23   3.85900654e-23
-   1.99407661e-23   1.44809951e-23   1.05647194e-23]
-Li concentration: 0.25. Diffusion_coefficient J at this concentration: [  1.11648755e-22   2.40054208e-24   1.32993401e-22   2.00572304e-22
-   3.75392619e-23   5.22775041e-23   5.40860030e-23   7.90970229e-24
-   1.35830435e-23   1.50230000e-22   1.73342573e-22]
-Li concentration: 0.25. Diffusion_coefficients at this concentration: [  4.07297070e-23   2.93090251e-23   1.87492891e-23   9.77533978e-23
-   3.20363905e-23   2.29582717e-23   3.83769990e-23   2.53633423e-22
-   5.01180649e-23   6.44132561e-23   3.18321486e-20]
-Li concentration: 0.25. Diffusion_coefficient J at this concentration: [  1.74773628e-22   3.51388566e-22   1.54758118e-22   7.10535891e-22
-   4.74476680e-22   1.56653083e-22   1.11425631e-22   4.41620548e-22
-   1.16203676e-21   1.84382946e-22   1.09615544e-19]
-Li concentration: 0.25. Diffusion_coefficients at this concentration: [  1.80425539e-21   1.96912875e-23   9.27207044e-23   7.55119937e-23
-   8.00452477e-23   2.55883092e-23   6.05758094e-23   1.20791143e-22
-   9.46826941e-23   6.59273783e-23   2.07997108e-22]
-Li concentration: 0.25. Diffusion_coefficient J at this concentration: [  9.08821888e-21   7.09339858e-23   1.59808821e-21   8.95820082e-22
-   3.21874483e-22   2.59696673e-22   2.17362929e-22   1.58439138e-21
-   1.52278057e-21   3.47310224e-22   1.96150849e-21]
-Li concentration: 0.25. Diffusion_coefficients at this concentration: [  5.10232820e-22   3.40267623e-22   8.52469221e-22   1.70387683e-22
-   1.99017595e-22   2.76488785e-22   1.71493049e-22   4.05040619e-22
-   1.89371034e-22   8.67720824e-23   4.15022614e-22]
-Li concentration: 0.25. Diffusion_coefficient J at this concentration: [  1.05391229e-20   2.25487838e-21   3.51217319e-21   2.38509842e-21
-   6.49650293e-22   4.87298300e-21   1.11820343e-21   1.64275772e-21
-   4.10048766e-21   4.01693187e-22   1.43387268e-21]
-Li concentration: 0.25. Diffusion_coefficients at this concentration: [  8.80145204e-22   2.10021936e-21   1.31402342e-21   7.84964211e-22
-   3.10072820e-22   6.41581803e-22   2.11268979e-22   2.20829641e-20
-   4.67858387e-21   4.30420710e-22   2.43772942e-21]
-Li concentration: 0.25. Diffusion_coefficient J at this concentration: [  9.51083153e-21   1.53560559e-21   2.10859470e-20   8.75104953e-21
-   7.91906350e-21   2.10917180e-20   3.47212204e-21   4.14055577e-21
-   7.01787581e-21   6.77799556e-21   2.37473827e-20]
-Li concentration: 0.25. Diffusion_coefficients at this concentration: [  2.90049081e-22   9.66265163e-22   7.07646667e-21   1.24741982e-21
-   5.68865347e-21   1.36690477e-21   2.42256764e-21   1.00664999e-20
-   1.44252384e-21   1.66532453e-21   1.16647266e-20]
-Li concentration: 0.25. Diffusion_coefficient J at this concentration: [  9.50622182e-21   2.77385982e-20   3.88284651e-20   3.33219346e-20
-   8.30888174e-20   2.85328667e-20   5.40374759e-20   9.31525458e-20
-   6.02673478e-20   5.65083668e-20   1.64842205e-19]
-Averaged Diffusion star Coefficients:[  2.75144068e-25   1.49219039e-23   2.04213395e-23   2.95274785e-21
-   2.40707915e-22   3.28778466e-22   3.26108854e-21   3.99067286e-21]
- Variables: [  5.  10.  15.  20.  25.  30.  40.  50.]
- Errors on D_star: [  3.27727689e-25   2.32563973e-23   1.19252698e-23   9.13268956e-21
-   4.96769298e-22   2.06257478e-22   6.08106872e-21   3.81173490e-21]Averaged Diffusion J Coefficients:[  4.24872183e-25   2.64921784e-23   8.51439173e-23   1.03215996e-20
-   1.62436235e-21   2.99190190e-21   1.04591043e-20   5.90749859e-20]
- Variables: [  5.  10.  15.  20.  25.  30.  40.  50.]
- Errors on D_star: [  6.05844933e-25   2.46277919e-23   6.78062347e-23   3.14009295e-20
-   2.44853646e-21   2.74464413e-21   7.42595267e-21   4.09023543e-20]
+Li concentration: 0.1. Diffusion_coefficients at this concentration: [  4.66504294e-20   6.23843623e-20]
+Li concentration: 0.1. Diffusion_coefficient J at this concentration: [  1.05664301e-20   1.42289697e-19]
+Li concentration: 0.12. Diffusion_coefficients at this concentration: [  8.51572103e-20   2.89471466e-20]
+Li concentration: 0.12. Diffusion_coefficient J at this concentration: [  1.05586201e-19   5.72309211e-20]
+Li concentration: 0.14. Diffusion_coefficients at this concentration: [  5.62330604e-20   2.20041386e-20]
+Li concentration: 0.14. Diffusion_coefficient J at this concentration: [  3.47251008e-19   3.05338328e-20]
 
- Total Time: 26381.8290379
+
+ Total Time: 9.4329431057
+ 
+
 
 
  END
+ d_star  variable error_d_star d_j error_d_j 
+  5.45173959e-20   1.00000000e-01   7.86696645e-21   7.64280636e-20 6.58616335e-20
+   5.70521784e-20   1.20000000e-01   2.81050318e-20   8.14085611e-20 2.41776400e-20
+   3.91185995e-20   1.40000000e-01   1.71144609e-20   1.88892420e-19 1.58358587e-19
