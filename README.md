@@ -4,12 +4,14 @@ Kinetic Monte Carlo Code for Lithium Diffussion
 By no means a general or transferable piece of code.  For all academic purposes, the reader is refered to:
 A. Van der Ven, G. Ceder, M. Asta, and P. D. Tepesch. Phys. Rev. B 64, 184307 – Published 25 October 2001
 
+File you care about is MC_lattice.py
+
 General Structure of the code:
 
 Creats a 2d Hexagonal lattice (defined by "size/dimension") with a random distribution of Li atoms on it.
 Performs a number of KMC steps on the lattice, each step consists of:
-1. determining which Li atoms can hop
-2. for each of those, hand the local lattice to a dictionary that returns the hop probability. 
+1. Reading the local environment of every atom on the lattice
+2. passing this to a dictionary that returns the probability of that atom jumping in one of 6 directions
 3. randomly (weighted by the probabilities) making one atom hop
 4. repeating steps 1-3 as many times as there are atoms
 
